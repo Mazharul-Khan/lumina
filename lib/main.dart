@@ -3,6 +3,9 @@ import 'package:lumina/core/database/objectbox.dart';
 import 'package:lumina/core/theme/app_theme.dart';
 import 'package:lumina/screens/home_screen.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+
 late ObjectBox objectBox;
 
 void main() async {
@@ -20,6 +23,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        quill.FlutterQuillLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('en', '')],
       title: 'Lumina',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,

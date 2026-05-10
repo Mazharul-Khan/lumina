@@ -5,12 +5,14 @@ import 'package:lumina/core/entity/vault_item.dart';
 import 'package:lumina/core/theme/app_theme.dart';
 
 class AnimatedSlidableCard extends StatefulWidget {
+  final bool hasSummary;
   final VaultItem item;
   final VoidCallback onTap;
   const AnimatedSlidableCard({
     super.key,
     required this.item,
     required this.onTap,
+    this.hasSummary = false,
   });
 
   @override
@@ -102,7 +104,11 @@ class _AnimatedSlidableCardState extends State<AnimatedSlidableCard>
         Color innerCardColor = isDark ? AppTheme.cardDark : AppTheme.cardLight;
         Color textColor =
             Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
-        Color neonColor = isDark ? AppTheme.primaryDark : AppTheme.primaryLight;
+        Color neonColor = !widget.hasSummary
+            ? Colors.transparent
+            : isDark
+            ? AppTheme.primaryDark
+            : AppTheme.primaryLight;
 
         // Default colors
         // Color currentBgColor = Colors.white;

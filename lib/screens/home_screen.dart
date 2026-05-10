@@ -36,6 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final items = objectBox.vaultBox.getAll();
+    final summaryIds = <int>{};
+    for(final s in objectBox.summaryBox.getAll()){
+        if(s.item.targetId!=0){
+          summaryIds.add(s.item.targetId);
+        }
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text("Lumina")),
       body: items.isEmpty
@@ -45,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (context, i) {
                 final item = items[i];
                 final isDeleting = _deletingIds.contains(item.id);
+                final hasSummary = summaryIds.contains(item.id);
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
@@ -186,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           child: Builder(
+                            
                             builder: (context) {
                               return AnimatedSlidableCard(
                                 item: item,
@@ -198,6 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   );
                                 },
+                                hasSummary: hasSummary
                               );
                             },
                           ),
