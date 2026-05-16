@@ -22,9 +22,10 @@ class _QuickNoteScreenState extends State<QuickNoteScreen> {
       _contentController.document.toDelta().toJson(),
     );
 
-    if (title.isEmpty || _contentController.document.toPlainText().trim().isEmpty) {
+    if (title.isEmpty ||
+        _contentController.document.toPlainText().trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Title and content cannot be empty")),
+        const SnackBar(content: Text("Title and content cannot be empty")),
       );
       return;
     }
@@ -38,12 +39,13 @@ class _QuickNoteScreenState extends State<QuickNoteScreen> {
     objectBox.vaultBox.put(item);
     Navigator.pop(context, true);
   }
+
   @override
-void dispose() {
-  _titleController.dispose();
-  _contentController.dispose();
-  super.dispose();
-}
+  void dispose() {
+    _titleController.dispose();
+    _contentController.dispose();
+    super.dispose();
+  }
 
   void _showSnack(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
@@ -53,17 +55,20 @@ void dispose() {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Quick Note"),
-        actions: [IconButton(icon: Icon(Icons.save), onPressed: _save)],
+        title: const Text("Quick Note"),
+        actions: [IconButton(icon: const Icon(Icons.save), onPressed: _save)],
       ),
+      // This is the default, but explicitly ensures the column resizes when keyboard opens
+      resizeToAvoidBottomInset: true,
       body: Column(
         children: [
+          // 1. Title Input
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: TextField(
               controller: _titleController,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: "Enter Title",
                 labelText: "Title",
                 border: UnderlineInputBorder(),
@@ -71,28 +76,13 @@ void dispose() {
             ),
           ),
 
-          quill.QuillSimpleToolbar(
-            controller: _contentController,
-            config: quill.QuillSimpleToolbarConfig(
-              showAlignmentButtons: true,
-              showColorButton: true,
-              showBackgroundColorButton: true,
-              showInlineCode: true,
-              showUndo: true,
-              showRedo: true,
-              showFontSize: true,
-              showFontFamily: true,
-              showItalicButton: true,
-              showBoldButton: true,
-            ),
-          ),
-
+          // 2. The Text Editor (Takes up all available remaining middle space)
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               child: quill.QuillEditor.basic(
                 controller: _contentController,
-                config: quill.QuillEditorConfig(
+                config: const quill.QuillEditorConfig(
                   expands: true,
                   padding: EdgeInsets.zero,
                 ),
@@ -100,18 +90,19 @@ void dispose() {
             ),
           ),
 
+          // 3. Save & AI Buttons (Sits directly above the toolbar, never hidden!)
           Padding(
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Row(
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: _save,
                     icon: const Icon(Icons.save),
-                    label: Text("Save"),
+                    label: const Text("Save"),
                   ),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () => _showSnack("AI Summary coming soon"),
@@ -128,6 +119,34 @@ void dispose() {
                   ),
                 ),
               ],
+            ),
+          ),
+
+          const Divider(height: 1, thickness: 0.5),
+
+          // 4. Grouped Single-Row Toolbar sitting naturally at the absolute bottom of the column
+          SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 54,
+              child: quill.QuillSimpleToolbar(
+                controller: _contentController,
+                config: const quill.QuillSimpleToolbarConfig(
+                  multiRowsDisplay: false,
+                  toolbarSize: 40,
+
+                  showFontSize: true,
+                  showFontFamily: true,
+                  showAlignmentButtons: true,
+                  showColorButton: true,
+                  showBackgroundColorButton: true,
+                  showInlineCode: true,
+                  showUndo: true,
+                  showRedo: true,
+                  showItalicButton: true,
+                  showBoldButton: true,
+                ),
+              ),
             ),
           ),
         ],
